@@ -6,15 +6,7 @@
 <h3 align="center">An AI-powered YouTube video summarization tool that generates time-stamped summaries using local LLMs and Whisper.</h3> 
 </p>
 
-## Demo
-
-<div align="center">
-    <img src="Assets/yttl-demo.png" alt="demo" width="700" />
-</div>
  
-
-The tool processes videos by extracting captions or generating transcripts, then creates hierarchical summaries with clickable timestamps.
-
 ## Features
 
 - **Multi-source transcription**: Uses YouTube captions when available, falls back to local Whisper transcription
@@ -25,21 +17,25 @@ The tool processes videos by extracting captions or generating transcripts, then
 - **Hardware acceleration**: Supports Metal (macOS), CUDA, and CPU inference
 - **Configurable models**: Choose from various Whisper and LLM model sizes
 
-## Installation
-
-### From Source
-```bash
-git clone <repository-url>
-cd yttl
-pip install -e .
-```
-
 ### System Requirements
 
 - **Python**: 3.12 or higher
 - **Memory**: 8GB+ RAM recommended for local models
 - **Storage**: 5-10GB for model downloads
 - **OS**: macOS, Linux, Windows
+
+## Installation
+
+### From Source
+```bash
+git clone https://github.com/allenv0/YTTL-TUI.git>
+cd yttl
+pip install -e .
+```
+
+The tool processes videos by extracting captions or generating transcripts, then creates hierarchical summaries with clickable timestamps.
+
+
 
 ## Quick Start
 
@@ -61,6 +57,10 @@ yttl -lwm tiny.en <url>   # Faster, lower accuracy
 (Youtube list supported)
 
 The summary will automatically open in your default browser when complete.
+
+<div align="center">
+    <img src="Assets/yttl-demo.png" alt="demo" width="700" />
+</div>
 
 ### SponsorBlock Integration
 ```bash
