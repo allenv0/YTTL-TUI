@@ -1,0 +1,13 @@
+{
+  "name": "yttl-main",
+  "version": "1.0.0",
+  "description": "Uses a locally running copy of Mistral 7b to generate per-section summaries of youtube videos. The summary is based either on the automatic google captions, or if those are not available - on the transcript generated using whisper on local machine.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

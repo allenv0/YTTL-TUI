@@ -1,0 +1,30 @@
+{
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "yttl@lucius.q.user"
+        }
+    },
+    "developer": {
+        "name": "Lucius Q. User"
+    },
+    "manifest_version": 3,
+    "name": "YTTL",
+    "permissions": [
+        "menus",
+        "nativeMessaging",
+        "activeTab"
+    ],
+    "version": "0.2.4",
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; upgrade-insecure-requests; style-src-attr 'unsafe-inline';"
+    },
+    "page_action": {
+        "default_title": "Summarize Video",
+        "show_matches": ["*://*.youtube.com/watch?v=*"]
+    }
+}

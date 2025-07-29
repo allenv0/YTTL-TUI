@@ -1,0 +1,52 @@
+[build-system]
+requires = ["scikit-build-core[pyproject]>=0.8.0"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "yttl"
+version = "1.0.0"
+description = "YTTL (YouTube To Text and LLM) - AI-powered video summarization tool with modern LLM and Whisper integration"
+authors = [
+    {name = "Allen", email = "a@allenleee.com"}
+]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.11"
+keywords = ["ai", "llm", "whisper", "youtube", "summarization", "video", "transcription"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Video",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = [
+    # Core dependencies
+    "Jinja2>=3.1.4",
+    "llama-cpp-python>=0.3.1",
+    "requests>=2.32.3",
+    "yt-dlp>=2024.12.13",
+    "huggingface-hub>=0.26.2",
+    "whisper_cpp_python_smr>=0.2.0",
+    "tqdm>=4.67.1",
+    # Async performance optimization dependencies
+    "aiohttp>=3.9.0",
+    "psutil>=5.9.0",
+]
+readme = "README.md"
+
+[tool.setuptools]
+packages = ["yttl"]
+
+[project.scripts]
+yttl = "yttl:cli_main"
+
+[tool.scikit-build]
+wheel.packages = ["yttl"]
+cmake.verbose = true

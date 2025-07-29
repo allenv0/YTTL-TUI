@@ -1,0 +1,9 @@
+{
+    "name": "summarize",
+    "path": "##PATH##",
+    "description": "summarizes things",
+    "type": "stdio",
+    "allowed_extensions": [
+        "yttl@lucius.q.user"
+    ]
+}
