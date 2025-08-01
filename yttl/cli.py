@@ -3,6 +3,9 @@
 import os
 from argparse import ArgumentParser
 import shutil
+import glob
+import re
+from bs4 import BeautifulSoup
 from .yttl import process_video, process_playlist, is_playlist_url, load_config, LLM_PROVIDERS, LOCAL_WHISPER_DEFAULT, WHISPER_PROVIDERS
 from tqdm import tqdm
 
@@ -43,10 +46,116 @@ class ProgressHooks(object):
         if self.sub_bar is not None:
             self.sub_bar.close()
 
+def search_files(search_terms, out_dir=OUT_DIR):
+    """Search through processed video files in the output directory."""
+    if not os.path.exists(out_dir):
+        print(f"Output directory '{out_dir}' not found.")
+        return
+    
+    html_files = glob.glob(os.path.join(out_dir, "*.html"))
+    if not html_files:
+        print(f"No HTML files found in '{out_dir}'.")
+        return
+    
+    search_terms_lower = search_terms.lower()
+    matches = []
+    
+    for html_file in html_files:
+        try:
+            with open(html_file, 'r', encoding='utf-8') as f:
+                content = f.read()
+            
+            soup = BeautifulSoup(content, 'html.parser')
+            
+            # Extract title
+            title_elem = soup.find('h1')
+            title = title_elem.get_text().strip() if title_elem else "Unknown Title"
+            
+            # Extract video URL
+            video_link = title_elem.find('a')['href'] if title_elem and title_elem.find('a') else ""
+            
+            # Search in title
+            title_match = search_terms_lower in title.lower()
+            
+            # Search in summary sections
+            summary_matches = []
+            summary_sections = soup.find_all('section')
+            for section in summary_sections:
+                if section.find('h2') and 'transcript' in section.find('h2').get_text().lower():
+                    continue  # Skip transcript section for summary search
+                section_text = section.get_text()
+                if search_terms_lower in section_text.lower():
+                    # Extract a snippet around the match
+                    text_lower = section_text.lower()
+                    match_pos = text_lower.find(search_terms_lower)
+                    start = max(0, match_pos - 50)
+                    end = min(len(section_text), match_pos + len(search_terms) + 50)
+                    snippet = section_text[start:end].strip()
+                    if start > 0:
+                        snippet = "..." + snippet
+                    if end < len(section_text):
+                        snippet = snippet + "..."
+                    summary_matches.append(snippet)
+            
+            # Search in transcript
+            transcript_matches = []
+            transcript_segments = soup.find_all('p', class_='transcript-segment')
+            for segment in transcript_segments:
+                segment_text = segment.get_text()
+                if search_terms_lower in segment_text.lower():
+                    # Clean up the text and extract snippet
+                    text_lines = segment_text.strip().split('\n')
+                    clean_text = ' '.join(line.strip() for line in text_lines if line.strip())
+                    transcript_matches.append(clean_text)
+            
+            # If we found matches, add to results
+            if title_match or summary_matches or transcript_matches:
+                matches.append({
+                    'file': html_file,
+                    'title': title,
+                    'video_url': video_link,
+                    'title_match': title_match,
+                    'summary_matches': summary_matches,
+                    'transcript_matches': transcript_matches
+                })
+                
+        except Exception as e:
+            print(f"Error processing {html_file}: {e}")
+            continue
+    
+    # Display results
+    if not matches:
+        print(f"No matches found for '{search_terms}'")
+        return
+    
+    print(f"Found {len(matches)} file(s) matching '{search_terms}':\n")
+    
+    for i, match in enumerate(matches, 1):
+        print(f"{i}. {match['title']}")
+        print(f"   File: {os.path.basename(match['file'])}")
+        if match['video_url']:
+            print(f"   URL: {match['video_url']}")
+        
+        if match['title_match']:
+            print("   ✓ Found in title")
+        
+        if match['summary_matches']:
+            print(f"   ✓ Found in summary ({len(match['summary_matches'])} match(es))")
+            for snippet in match['summary_matches'][:2]:  # Show first 2 snippets
+                print(f"     \"{snippet}\"")
+        
+        if match['transcript_matches']:
+            print(f"   ✓ Found in transcript ({len(match['transcript_matches'])} match(es))")
+            for snippet in match['transcript_matches'][:2]:  # Show first 2 snippets
+                print(f"     \"{snippet}\"")
+        
+        print()
+
 def main():
     config = load_config()
     parser = ArgumentParser(prog='yttl')
-    parser.add_argument('video_url', help='YouTube video URL or playlist URL')
+    parser.add_argument('video_url', nargs='?', help='YouTube video URL or playlist URL')
+    parser.add_argument('-s', '--search', help='Search through processed videos in the output directory')
     parser.add_argument('-lp', '--llm-provider', choices = LLM_PROVIDERS.keys(), default = config.get('llm_provider'))
     parser.add_argument('-wp', '--whisper-provider', choices = WHISPER_PROVIDERS.keys(), default = config.get('whisper_provider'))
     parser.add_argument('-sb', '--sponsorblock',
@@ -69,6 +178,16 @@ def main():
     parser.add_argument('--performance-report', action='store_true', default=config.get('performance_report', False),
                        help='Show detailed performance statistics after processing')
     args = parser.parse_args()
+    
+    # Handle search functionality
+    if args.search:
+        search_files(args.search)
+        return
+    
+    # Require video_url if not searching
+    if not args.video_url:
+        parser.error("video_url is required when not using --search")
+    
     api_key = config.get(GROQ_API_KEY_VAR, None)
     api_key = config.get('openai_api_key', api_key)
     api_key = os.environ.get(GROQ_API_KEY_VAR, api_key)
