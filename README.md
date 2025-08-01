@@ -62,6 +62,20 @@ The summary will automatically open in your default browser when complete.
     <img src="Assets/yttl-demo.png" alt="demo" width="700" />
 </div>
 
+
+### Simple Text Search 
+
+```
+yttl -s "<search>"
+
+```
+
+<div align="center">
+    <img src="Assets/search.png" alt="demo" width="700" />
+</div>
+
+
+
 ### SponsorBlock Integration
 ```bash
 # Exclude sponsored content and intros
