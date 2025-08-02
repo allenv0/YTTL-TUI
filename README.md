@@ -2,8 +2,8 @@
 
 <p align="center">
 <img src="Assets/yttl-logo.png" width="200" height="200" />
-<h1 align="center">YTTL</h1>
-<h3 align="center">An AI-powered YouTube video summarization tool that generates time-stamped summaries using local LLMs and Whisper.</h3> 
+<h1 align="center">YTTL (YouTube To Text and LLM)</h1>
+<h3 align="center">YTTL converts YouTube videos into searchable transcripts and AI summaries, making your video library instantly accessible through Claude Desktop.</h3> 
 </p>
 
  
@@ -74,6 +74,34 @@ yttl -s "<search>"
     <img src="Assets/search.png" alt="demo" width="700" />
 </div>
 
+### MCP - Claude Desktop (WIP)
+
+<div align="center">
+    <img src="Assets/claude-mcp.png" alt="demo" width="700" />
+</div>
+
+**Key Phrases to Use**
+
+For searching your processed videos:
+
+- "Search my videos for [topic]"
+- "Find videos in my collection about [topic]"
+- "Look through my processed videos for [keyword]"
+- "Search my YTTL videos for [topic]"
+
+For listing your videos:
+
+- "List my available videos"
+- "Show me what videos I have"
+- "What videos are in my collection?"
+- "List all my processed videos"
+
+When you use these phrases, Claude Desktop will:
+
+- Recognize the request as needing video information
+- Call your YTTL MCP server using the search_videos or list_videos tools
+- Search through your local HTML files in /Users/yout/YTTL-TUI/out/
+- Return results from YOUR processed videos - not from the internet
 
 
 ### SponsorBlock Integration
